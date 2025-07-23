@@ -1,42 +1,28 @@
 pipeline{
     agent any
     stages{
-        stage('checkout the code from github'){
+        stage('build project'){
             steps{
-                 git url: 'https://github.com/Prince730-creator/pro1'
-                 echo 'github url checkout'
+                git url:'https://github.com/Prince730-creator/pro1', branch: "master"
+                sh 'mvn clean package'
+              
             }
         }
-        stage('codecompile with ashish'){
+        stage('Build docker image'){
             steps{
-                echo 'starting compiling'
-                sh 'mvn compile'
+                script{
+                    sh 'docker build -t ashish/staragileprojectfinance:v1 .'
+                    sh 'docker images'
+                }
             }
         }
-        stage('codetesting with ashish'){
-            steps{
-                sh 'mvn test'
-            }
-        }
-        stage('qa with ashish'){
-            steps{
-                sh 'mvn checkstyle:checkstyle'
-            }
-        }
-        stage('package with ashish'){
-            steps{
-                sh 'mvn package'
-            }
-        }
-        stage('run dockerfile'){
-          steps{
-               sh 'docker build -t myimg .'
-           }
-         }
-        stage('port expose'){
-            steps{
-                sh 'docker run -dt -p 9000:8091 --name c001 myimg'
-            }
-        }   
+         
+        
+     stage('Deploy') {
+            steps {
+                sh 'sudo docker run -itd --name My-first-containe21211 -p 8083:8081 ashish/staragileprojectfinance:v1'
+                  
+                }
+          }    
     }
 }
